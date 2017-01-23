@@ -73,6 +73,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 case "*":
                     accumulator = mul(numStack.removeLast(), accumulator)
                 case "/":
+                    if accumulator == Double(0) {
+                        displayView.text = "오류"
+                        userInput = ""
+                        accumulator = 0
+                        opStack.removeAll()
+                        numStack.removeAll()
+                        return
+                    }
                     accumulator = div(numStack.removeLast(), accumulator)
                 default: break
                 }
@@ -104,7 +112,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         if userInput == "" {
             return
         }
-        if !numStack.isEmpty {
+        if !numStack.isEmpty && !opStack.isEmpty {
             let stackOp = opStack.last!
             switch stackOp {
             case "+":
@@ -114,18 +122,25 @@ class ViewController: UIViewController, UITextFieldDelegate {
             case "*":
                 accumulator = mul(numStack.removeLast(), accumulator)
             case "/":
+                if accumulator == Double(0) {
+                    displayView.text = "오류"
+                    userInput = ""
+                    accumulator = 0
+                    opStack.removeAll()
+                    numStack.removeAll()
+                    return
+                }
                 accumulator = div(numStack.removeLast(), accumulator)
             default: break
             }
-            if opStack.isEmpty {
-                doEquals()
-            }
+            
         }
         updateDisplay()
         userInput = ""
     }
 
     func updateDisplay() {
+
         // Int형식일때는 .을 표시하지 않는다.
         let iAcc = Int(accumulator)
         if accumulator - Double(iAcc) == 0 {
@@ -149,7 +164,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         return result
     }
     func div(_ a: Double, _ b: Double) -> Double {
+
         let result = a / b
+        
         return result
     }
 
